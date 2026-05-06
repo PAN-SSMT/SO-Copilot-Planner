@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
+import { AIIndicatorCard } from '../components/DemoGuide/AIIndicatorCard'
+import { FeatureDiscoveryHint } from '../components/DemoGuide/FeatureDiscoveryHint'
+import { SectionCallout } from '../components/DemoGuide/SectionCallout'
 import * as data from '../data'
 
 function categoryLabel(category: (typeof data.scopeReferenceData)[number]['category']) {
@@ -199,12 +202,17 @@ export function ScopeCheckPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="relative space-y-4">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">Scope Check</h1>
         <p className="mt-1 text-sm text-slate-600">
           Validate requested work against Premium Success scope in seconds.
         </p>
+        <FeatureDiscoveryHint
+          id="fdh-5"
+          pageKey="scope-check"
+          text="Type a keyword like 'RBAC' or 'detection rules' in the search bar to instantly filter scope items. Select a customer from the dropdown to see only scope items relevant to their product modules."
+        />
         <input
           type="text"
           value={searchTerm}
@@ -232,9 +240,21 @@ export function ScopeCheckPage() {
             </p>
           )}
         </div>
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-8"
+            text="The most-loved feature in user testing. When a customer asks 'can you help with X?' mid-session, the CSE searches here for an instant in-scope or out-of-scope answer. The customer filter narrows scope items to only what's relevant to that customer's product modules."
+          />
+        </div>
+        <div className="absolute right-4 top-20">
+          <AIIndicatorCard
+            id="ai-8"
+            text="AI-powered in production. Natural language scope classification — the CSE types what the customer asked in plain English, and the model classifies it as in-scope, out-of-scope, or ambiguous with an explanation. Currently uses keyword search against the 54 structured scope items."
+          />
+        </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-base font-semibold text-slate-900">Quick Decision Helper</h2>
         <ul className="mt-2 space-y-2 text-sm text-slate-700">
           <li>

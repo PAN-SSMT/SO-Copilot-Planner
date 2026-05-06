@@ -1,6 +1,7 @@
 import { CheckCircle2, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { SectionCallout } from '../../components/DemoGuide/SectionCallout'
 import * as data from '../../data'
 
 function formatDate(date: string | null) {
@@ -156,7 +157,7 @@ export function SessionPlanTab() {
     <div className="space-y-4">
       {sessionPlannerBanner}
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">
@@ -198,6 +199,12 @@ export function SessionPlanTab() {
           <p className="mt-2 text-xs text-slate-600">
             Green: Delivered, Blue: Next Scheduled, Gray: Planned, Amber: Rescheduled, Red: Skipped
           </p>
+        </div>
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-12"
+            text="The delivery roadmap. Each session maps to a maturity outcome and tracks LoE consumption. This view is read-only — session planning, scheduling, and calendar invites are managed in the S&O Session Planner. Copilot shows delivery status and progress tracking."
+          />
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { SectionCallout } from '../../components/DemoGuide/SectionCallout'
 import * as data from '../../data'
 
 type EscalationWorkflowType =
@@ -145,7 +146,7 @@ export function EscalationsTab() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Active Escalations Summary</h2>
         {risks.length === 0 ? (
           <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">
@@ -167,6 +168,12 @@ export function EscalationsTab() {
             </div>
           </div>
         )}
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-15"
+            text="Four escalation workflows from the Runbook (Deployment Blocker, LoE Overrun, Product Issue, Account Health) with defined paths and stakeholders. The initiate form routes through the correct workflow based on the type selected."
+          />
+        </div>
       </section>
 
       <section className="space-y-3">

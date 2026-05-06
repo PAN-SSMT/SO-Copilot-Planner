@@ -1,6 +1,7 @@
 import { Bell, Calendar, ChevronLeft, ChevronRight, FileText, LayoutDashboard, Search, Shield, Users, AlertTriangle } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useDemoGuide } from '../contexts/DemoGuideContext'
 
 type NavItem = {
   to: string
@@ -29,6 +30,7 @@ const pageTitles: Record<string, string> = {
 export function AppLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const { pathname } = useLocation()
+  const { demoGuideActive, toggleDemoGuide } = useDemoGuide()
 
   const pageTitle = useMemo(() => {
     if (pathname.startsWith('/customers/')) {
@@ -101,6 +103,40 @@ export function AppLayout() {
         <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-5">
           <div className="text-sm font-semibold text-slate-700">{pageTitle}</div>
           <div className="flex items-center gap-4">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', zIndex: 50 }}>
+              <span style={{ fontSize: '13px', color: '#666666', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                Demo Guide
+              </span>
+              <button
+                onClick={toggleDemoGuide}
+                style={{
+                  position: 'relative',
+                  width: '44px',
+                  height: '24px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: demoGuideActive ? '#7B1FA2' : '#D1D5DB',
+                  transition: 'background-color 200ms ease',
+                  padding: 0,
+                  flexShrink: 0,
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '2px',
+                    left: demoGuideActive ? '22px' : '2px',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: '#FFFFFF',
+                    transition: 'left 200ms ease',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  }}
+                />
+              </button>
+            </div>
             <button
               type="button"
               className="relative rounded-md p-1.5 text-slate-600 transition hover:bg-gray-100 hover:text-slate-900"

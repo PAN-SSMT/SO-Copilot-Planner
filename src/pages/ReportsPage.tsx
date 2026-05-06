@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { AIIndicatorCard } from '../components/DemoGuide/AIIndicatorCard'
+import { SectionCallout } from '../components/DemoGuide/SectionCallout'
 import * as data from '../data'
 
 const TODAY = new Date('2026-04-15T00:00:00')
@@ -159,12 +161,18 @@ export function ReportsPage() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">Portfolio Report — Marcus Bennett</h1>
         <p className="mt-1 text-sm text-slate-600">
           CSE — NAM | Manager: Lauren Caldwell
         </p>
         <p className="mt-1 text-xs text-slate-500">Report date: April 15, 2026</p>
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-7"
+            text="The manager view. A CSE brings this to their 1:1. It shows portfolio health distribution, risk summary by type, per-customer status with all key metrics, process quality scores, and an editable weekly highlights section."
+          />
+        </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-6 md:grid-cols-2">
@@ -314,7 +322,7 @@ export function ReportsPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Weekly Highlights</h2>
         <textarea
           value={weeklyHighlights}
@@ -322,6 +330,12 @@ export function ReportsPage() {
           rows={6}
           className="mt-2 w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
         />
+        <div className="absolute right-4 top-2">
+          <AIIndicatorCard
+            id="ai-10"
+            text="AI-drafted in production. The model would generate the weekly highlights from the past 7 days of session activity, escalation changes, and risk movements across the portfolio. The CSE edits the draft rather than writing from scratch. Currently manually entered."
+          />
+        </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-4 md:grid-cols-2">

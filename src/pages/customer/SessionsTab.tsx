@@ -1,6 +1,9 @@
 import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp, Circle, Plus, XCircle } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AIIndicatorCard } from '../../components/DemoGuide/AIIndicatorCard'
+import { FeatureDiscoveryHint } from '../../components/DemoGuide/FeatureDiscoveryHint'
+import { SectionCallout } from '../../components/DemoGuide/SectionCallout'
 import * as data from '../../data'
 
 type SessionHistoryItem = {
@@ -272,7 +275,13 @@ export function SessionsTab() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="relative space-y-4">
+      <FeatureDiscoveryHint
+        id="fdh-7"
+        pageKey="customer-sessions"
+        text="Open the 'Record New Session' form and explore the four output previews — Customer Email, Internal Update, Clarizen Summary, and Check-In Update. This is the single-capture workflow that eliminates entering the same data in 5 systems."
+      />
+
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Session History</h2>
         <div className="mt-3 space-y-3">
@@ -338,7 +347,7 @@ export function SessionsTab() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <button
           type="button"
           onClick={() => setIsFormOpen((prev) => !prev)}
@@ -513,8 +522,8 @@ export function SessionsTab() {
               />
             </label>
 
-            <div className="grid gap-3 xl:grid-cols-2">
-              <article className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <div className="relative grid gap-3 xl:grid-cols-2">
+              <article className="relative rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <h4 className="text-sm font-semibold text-slate-900">Customer Email Preview</h4>
                 <p className="mt-2 text-xs text-slate-600">
                   To: {customerContacts.map((contact) => contact.email).join(', ') || '—'}
@@ -565,9 +574,15 @@ export function SessionsTab() {
                 <p className="mt-2 text-xs text-slate-400">
                   CC: Clarizen project email | BCC: #pso-cloud-customer_status_reports
                 </p>
+                <div className="absolute right-4 top-2">
+                  <AIIndicatorCard
+                    id="ai-5"
+                    text="AI-generated in production. The model would draft the full customer email from session notes, adapting tone and detail level to the customer contact's role and communication history. The CSE reviews and sends rather than writing from scratch. Estimated time savings: 15-20 minutes per session."
+                  />
+                </div>
               </article>
 
-              <article className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <article className="relative rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <h4 className="text-sm font-semibold text-slate-900">Internal Update Preview</h4>
                 <p className="mt-2 text-xs text-slate-600">
                   To: {accountTeam.map((member) => member.email).join(', ') || '—'}
@@ -578,9 +593,15 @@ export function SessionsTab() {
                   <p className="mt-1"><span className="font-semibold">Completed:</span> {whatCompleted || 'Completion summary will appear here.'}</p>
                   <p className="mt-1"><span className="font-semibold">Risk:</span> {blockers || 'No risk flagged.'}</p>
                 </div>
+                <div className="absolute right-4 top-2">
+                  <AIIndicatorCard
+                    id="ai-6"
+                    text="AI-generated in production. The model would tailor the internal update to highlight what the account team cares about — renewal risk, expansion signals, blockers — based on the customer's current status and the AM's historical questions."
+                  />
+                </div>
               </article>
 
-              <article className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <article className="relative rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <h4 className="text-sm font-semibold text-slate-900">Clarizen Summary Preview</h4>
                 <div className="mt-2 text-xs text-slate-700">
                   <p>
@@ -597,6 +618,12 @@ export function SessionsTab() {
                     {engagement ? `${engagement.loePercentage}%` : '—'}
                   </p>
                 </div>
+                <div className="absolute right-4 top-2">
+                  <AIIndicatorCard
+                    id="ai-7"
+                    text="AI-generated in production. The model would update the RAG status, milestone completion, and overall summary in the Runbook's required format, pulling context from the entire session history. Currently uses a template with form field substitution."
+                  />
+                </div>
               </article>
 
               <article className="rounded-lg border border-slate-200 bg-slate-50 p-3">
@@ -607,6 +634,12 @@ export function SessionsTab() {
                   <p className="mt-1"><span className="font-semibold">Relevant cases:</span> {blockers || 'None'}</p>
                 </div>
               </article>
+              <div className="absolute right-4 top-2">
+                <SectionCallout
+                  id="sc-14"
+                  text="Four deliverables generated from a single form entry. The customer email follows the official S&O status report template. In production, these push directly to Gmail, Clarizen, and the Check-In Dashboard via API integrations."
+                />
+              </div>
             </div>
 
             <section className="rounded-lg border border-slate-200 bg-white p-4">
@@ -654,6 +687,12 @@ export function SessionsTab() {
             </button>
           </div>
         )}
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-13"
+            text="This is where the rework problem gets solved. Today, after every session, CSEs update 5 separate systems with the same information. This form captures once and generates all 5 outputs: customer email, internal update, Clarizen summary, Clarizen time, and Check-In Dashboard update."
+          />
+        </div>
       </section>
 
       {showToast && (

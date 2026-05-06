@@ -1,6 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react'
+import { AIIndicatorCard } from '../components/DemoGuide/AIIndicatorCard'
+import { FeatureDiscoveryHint } from '../components/DemoGuide/FeatureDiscoveryHint'
+import { SectionCallout } from '../components/DemoGuide/SectionCallout'
 import * as data from '../data'
 
 type MaturityLevel = 'G' | 'S' | 'B' | '-'
@@ -122,6 +125,9 @@ export function DashboardPage() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [expandedRiskCustomerIds, setExpandedRiskCustomerIds] = useState<Set<string>>(new Set())
+  const summaryStripRef = useRef<HTMLElement | null>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
 
   const customerById = useMemo(
     () => new Map(data.customers.map((customer) => [customer.id, customer])),
@@ -243,8 +249,40 @@ export function DashboardPage() {
     })
   }
 
+  const updateSummaryStripScrollState = () => {
+    const strip = summaryStripRef.current
+    if (!strip) {
+      setCanScrollLeft(false)
+      setCanScrollRight(false)
+      return
+    }
+
+    const { scrollLeft, scrollWidth, clientWidth } = strip
+    setCanScrollLeft(scrollLeft > 0)
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 1)
+  }
+
+  const handleSummaryStripScroll = () => {
+    updateSummaryStripScrollState()
+  }
+
+  const scrollSummaryStrip = (direction: 'left' | 'right') => {
+    summaryStripRef.current?.scrollBy({
+      left: direction === 'left' ? -200 : 200,
+      behavior: 'smooth',
+    })
+  }
+
+  useEffect(() => {
+    updateSummaryStripScrollState()
+    window.addEventListener('resize', updateSummaryStripScrollState)
+    return () => {
+      window.removeEventListener('resize', updateSummaryStripScrollState)
+    }
+  }, [])
+
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-slate-900">Portfolio Dashboard</h1>
         <p className="mt-1 text-sm text-slate-600">
@@ -253,116 +291,162 @@ export function DashboardPage() {
         </p>
       </div>
 
-      <section className="flex flex-nowrap gap-3 overflow-x-auto">
-        <article
-          className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
-          onClick={() => navigate('/customers')}
+      <FeatureDiscoveryHint
+        id="fdh-1"
+        pageKey="dashboard"
+        text="Try clicking the Health circles in the summary strip — each one filters the Customers page by that status. Then scroll down to Active Risks and expand a customer group to see their individual risk details."
+      />
+
+      <div className="relative">
+        <style>{'.summary-strip-scrollbar-hidden::-webkit-scrollbar{display:none;}'}</style>
+        <section
+          ref={summaryStripRef}
+          onScroll={handleSummaryStripScroll}
+          className="summary-strip-scrollbar-hidden relative flex flex-nowrap gap-3 overflow-x-auto overflow-y-visible"
+          style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
         >
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Total Customers
-            </p>
-            <p className="text-2xl font-bold text-slate-900">{data.customers.length}</p>
-          </div>
-        </article>
-        <article className="h-28 min-w-[120px] flex-1 flex-shrink-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Health</p>
-            <div className="flex items-center justify-center gap-0.5">
-              <button
-                type="button"
-                title="Filter to On Track customers"
-                onClick={() => navigate('/customers', { state: { healthFilter: 'On Track' } })}
-                className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700 transition-transform duration-200 hover:scale-110"
-              >
-                {healthCounts.green}
-              </button>
-              <button
-                type="button"
-                title="Filter to At Risk customers"
-                onClick={() => navigate('/customers', { state: { healthFilter: 'At Risk' } })}
-                className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700 transition-transform duration-200 hover:scale-110"
-              >
-                {healthCounts.amber}
-              </button>
-              <button
-                type="button"
-                title="Filter to Off Track customers"
-                onClick={() => navigate('/customers', { state: { healthFilter: 'Off Track' } })}
-                className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700 transition-transform duration-200 hover:scale-110"
-              >
-                {healthCounts.red}
-              </button>
+          <article
+            className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
+            onClick={() => navigate('/customers')}
+          >
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Total Customers
+              </p>
+              <p className="text-2xl font-bold text-slate-900">{data.customers.length}</p>
             </div>
-          </div>
-        </article>
-        <article
-          className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
-          onClick={() => navigate('/calendar')}
-        >
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Sessions This Week
-            </p>
-            <p className="text-2xl font-bold text-slate-900">3</p>
-          </div>
-        </article>
-        <article className="h-28 min-w-[120px] flex-1 flex-shrink-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Overdue Tasks</p>
-            <p className="text-2xl font-bold text-slate-900">2</p>
-          </div>
-        </article>
-        <article
-          className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
-          onClick={() => navigate('/calendar', { state: { eventTypeFilter: 'psr' } })}
-        >
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Upcoming PSRs</p>
-            <p className="text-2xl font-bold text-slate-900">2</p>
-          </div>
-        </article>
-        <article
-          className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
-          onClick={() => navigate('/alerts', { state: { typeFilter: 'Renewal' } })}
-        >
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Renewals &lt; 6 months
-            </p>
-            <p className="text-2xl font-bold text-slate-900">{renewalsUnderSixMonthsCount}</p>
-          </div>
-        </article>
-        <article
-          className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
-          onClick={() => navigate('/alerts', { state: { typeFilter: 'escalation' } })}
-        >
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Active Escalations
-            </p>
-            <p className="text-2xl font-bold text-slate-900">
-              {data.riskAlerts.filter(isEscalationRelatedRisk).length}
-            </p>
-          </div>
-        </article>
-        <article
-          className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
-          onClick={() => navigate('/alerts', { state: { typeFilter: 'Cadence Violation' } })}
-        >
-          <div className="flex h-full flex-col items-center justify-between text-center">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Cadence Violations
-            </p>
-            <p className="text-2xl font-bold text-slate-900">
-              {data.riskAlerts.filter((risk) => risk.type === 'cadence_violation').length}
-            </p>
-          </div>
-        </article>
-      </section>
+          </article>
+          <article className="h-28 min-w-[120px] flex-1 flex-shrink-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Health</p>
+              <div className="flex items-center justify-center gap-0.5">
+                <button
+                  type="button"
+                  title="Filter to On Track customers"
+                  onClick={() => navigate('/customers', { state: { healthFilter: 'On Track' } })}
+                  className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700 transition-transform duration-200 hover:scale-110"
+                >
+                  {healthCounts.green}
+                </button>
+                <button
+                  type="button"
+                  title="Filter to At Risk customers"
+                  onClick={() => navigate('/customers', { state: { healthFilter: 'At Risk' } })}
+                  className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700 transition-transform duration-200 hover:scale-110"
+                >
+                  {healthCounts.amber}
+                </button>
+                <button
+                  type="button"
+                  title="Filter to Off Track customers"
+                  onClick={() => navigate('/customers', { state: { healthFilter: 'Off Track' } })}
+                  className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700 transition-transform duration-200 hover:scale-110"
+                >
+                  {healthCounts.red}
+                </button>
+              </div>
+            </div>
+          </article>
+          <article
+            className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
+            onClick={() => navigate('/calendar')}
+          >
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Sessions This Week
+              </p>
+              <p className="text-2xl font-bold text-slate-900">3</p>
+            </div>
+          </article>
+          <article className="h-28 min-w-[120px] flex-1 flex-shrink-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Overdue Tasks</p>
+              <p className="text-2xl font-bold text-slate-900">2</p>
+            </div>
+          </article>
+          <article
+            className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
+            onClick={() => navigate('/calendar', { state: { eventTypeFilter: 'psr' } })}
+          >
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Upcoming PSRs</p>
+              <p className="text-2xl font-bold text-slate-900">2</p>
+            </div>
+          </article>
+          <article
+            className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
+            onClick={() => navigate('/alerts', { state: { typeFilter: 'Renewal' } })}
+          >
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Renewals &lt; 6 months
+              </p>
+              <p className="text-2xl font-bold text-slate-900">{renewalsUnderSixMonthsCount}</p>
+            </div>
+          </article>
+          <article
+            className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
+            onClick={() => navigate('/alerts', { state: { typeFilter: 'escalation' } })}
+          >
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Active Escalations
+              </p>
+              <p className="text-2xl font-bold text-slate-900">
+                {data.riskAlerts.filter(isEscalationRelatedRisk).length}
+              </p>
+            </div>
+          </article>
+          <article
+            className="h-28 min-w-[120px] flex-1 flex-shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md"
+            onClick={() => navigate('/alerts', { state: { typeFilter: 'Cadence Violation' } })}
+          >
+            <div className="flex h-full flex-col items-center justify-between text-center">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                Cadence Violations
+              </p>
+              <p className="text-2xl font-bold text-slate-900">
+                {data.riskAlerts.filter((risk) => risk.type === 'cadence_violation').length}
+              </p>
+            </div>
+          </article>
+        </section>
+        {canScrollLeft && (
+          <>
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent" />
+            <button
+              type="button"
+              onClick={() => scrollSummaryStrip('left')}
+              className="absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white shadow-md transition-colors hover:bg-gray-100"
+              aria-label="Scroll summary strip left"
+            >
+              <ChevronLeft size={16} className="text-gray-600" />
+            </button>
+          </>
+        )}
+        {canScrollRight && (
+          <>
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent" />
+            <button
+              type="button"
+              onClick={() => scrollSummaryStrip('right')}
+              className="absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white shadow-md transition-colors hover:bg-gray-100"
+              aria-label="Scroll summary strip right"
+            >
+              <ChevronRight size={16} className="text-gray-600" />
+            </button>
+          </>
+        )}
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-1"
+            text="Portfolio health at a glance. These 8 metrics are the first thing a CSE checks every morning. Each card is clickable — the Health circles filter the Customers page by status, and Renewals, Escalations, and Cadence Violations jump directly to filtered risk views."
+          />
+        </div>
+      </div>
 
       <div className="space-y-6">
-        <section id="todays-priorities" className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <section id="todays-priorities" className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900">Today&apos;s Priorities</h2>
           <ul className="mt-4 divide-y divide-slate-100">
             {priorities.map((item) => {
@@ -404,9 +488,21 @@ export function DashboardPage() {
               )
             })}
           </ul>
+          <div className="absolute right-4 top-2">
+            <SectionCallout
+              id="sc-2"
+              text="Prioritized actions for today, ranked by urgency. Red dots are critical items (overdue cadence, LoE overruns), amber dots need attention this week. Each customer name links to their workspace."
+            />
+          </div>
+          <div className="absolute bottom-4 right-4">
+            <AIIndicatorCard
+              id="ai-1"
+              text="AI-prioritized in production. The model would analyze all risk signals, session history, renewal dates, and support case status to rank priorities by urgency and business impact. Currently ordered by rule-based logic with hardcoded priority weights."
+            />
+          </div>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900">Active Risks</h2>
           <div className="mt-4 max-h-[42rem] space-y-4 overflow-y-auto pr-1">
             {riskCustomerGroups.map(({ customerId, risks, highCount, mediumCount, lowCount }) => {
@@ -482,9 +578,15 @@ export function DashboardPage() {
               )
             })}
           </div>
+          <div className="absolute bottom-4 right-4">
+            <AIIndicatorCard
+              id="ai-2"
+              text="AI-enhanced in production. The risk engine currently uses fixed threshold rules (e.g., cadence gap > 4 weeks = alert). AI would learn per-customer patterns, reduce false positives, and predict risks before thresholds are hit."
+            />
+          </div>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-lg font-semibold text-slate-900">My Customers</h2>
             <input
@@ -620,6 +722,12 @@ export function DashboardPage() {
                 })}
               </tbody>
             </table>
+          </div>
+          <div className="absolute right-4 top-2">
+            <SectionCallout
+              id="sc-3"
+              text="The complete portfolio in one table. Every column maps to a metric the CSE and their manager track: health status, engagement phase, maturity progression, LoE consumption, cadence compliance, and renewal proximity. Click any customer name to enter their workspace."
+            />
           </div>
         </section>
       </div>

@@ -2,6 +2,9 @@ import { ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronUp, Minus } from 
 import { useEffect, useMemo, useState } from 'react'
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend, CartesianGrid } from 'recharts'
 import { useParams } from 'react-router-dom'
+import { AIIndicatorCard } from '../../components/DemoGuide/AIIndicatorCard'
+import { FeatureDiscoveryHint } from '../../components/DemoGuide/FeatureDiscoveryHint'
+import { SectionCallout } from '../../components/DemoGuide/SectionCallout'
 import * as data from '../../data'
 
 type ViewMode = 'current' | 'history'
@@ -258,7 +261,13 @@ export function MaturityTab() {
   }, [compareLeft, compareRight])
 
   return (
-    <div className="space-y-4">
+    <div className="relative space-y-4">
+      <FeatureDiscoveryHint
+        id="fdh-8"
+        pageKey="customer-maturity"
+        text="Switch between 'Current Assessment' and 'History & Progression' views. The progression chart shows maturity movement over time. Try the 'Compare Assessments' feature to see side-by-side change between two dates."
+      />
+
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
           <button
@@ -311,11 +320,23 @@ export function MaturityTab() {
                 </div>
               </section>
 
-              <section className="grid gap-4 xl:grid-cols-3">
+              <section className="relative grid gap-4 xl:grid-cols-3">
                 {renderPillarUseCases(latestAssessment.id, latestAssessment.pillars)}
+                <div className="absolute right-4 top-2">
+                  <SectionCallout
+                    id="sc-11"
+                    text="The maturity model is the backbone of S&O. Three pillars (Posture Security, Runtime Security, Application Security) each with use cases rated from Not Started to Gold. This drives what sessions to deliver next and measures engagement outcomes over time."
+                  />
+                </div>
+                <div className="absolute bottom-4 right-4">
+                  <AIIndicatorCard
+                    id="ai-4"
+                    text="AI-recommended in production. The model would analyze the customer's current maturity gaps, product modules, session history, and available LoE to recommend the optimal next sessions. Currently mapped from maturity gaps to session topics by static rules."
+                  />
+                </div>
               </section>
 
-              <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
                 <h3 className="text-lg font-semibold text-slate-900">
                   Recommended Sessions from Assessment
                 </h3>

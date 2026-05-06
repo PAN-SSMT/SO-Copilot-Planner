@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { SectionCallout } from '../../components/DemoGuide/SectionCallout'
 import * as data from '../../data'
 
 type PsrEntry = {
@@ -147,7 +148,7 @@ export function ServiceReviewsTab() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">PSR Schedule</h2>
         <div className="mt-3 grid gap-3 md:grid-cols-4">
           <article className="rounded-md border border-slate-200 p-3">
@@ -180,6 +181,12 @@ export function ServiceReviewsTab() {
               {schedule ? schedule.daysUntil : '—'}
             </p>
           </article>
+        </div>
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-16"
+            text="Periodic Service Reviews are the formal customer-facing progress reports. Cadence is driven by ARR tier (quarterly for under $50K, monthly for $50K-$200K, bi-weekly for $200K+). The preparation checklist ensures nothing is missed."
+          />
         </div>
       </section>
 

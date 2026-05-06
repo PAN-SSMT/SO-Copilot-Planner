@@ -16,6 +16,9 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { AIIndicatorCard } from '../../components/DemoGuide/AIIndicatorCard'
+import { FeatureDiscoveryHint } from '../../components/DemoGuide/FeatureDiscoveryHint'
+import { SectionCallout } from '../../components/DemoGuide/SectionCallout'
 import * as data from '../../data'
 
 type PillarLevel = 'Gold' | 'Silver' | 'Bronze' | 'Not Started'
@@ -329,7 +332,13 @@ export function OverviewTab() {
         : 'bg-amber-100 text-amber-700'
 
   return (
-    <div className="space-y-4">
+    <div className="relative space-y-4">
+      <FeatureDiscoveryHint
+        id="fdh-6"
+        pageKey="customer-overview"
+        text="Scroll down to see Support Cases (pulls from SFDC in production) and Quick Links to all external systems. The Lifecycle Tracker at the top shows which engagement phase the customer is in."
+      />
+
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Lifecycle Tracker</h2>
         <div className="mt-4 overflow-x-auto">
@@ -380,7 +389,7 @@ export function OverviewTab() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Engagement Snapshot</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           <article className="rounded-md border border-slate-100 p-3">
@@ -449,6 +458,12 @@ export function OverviewTab() {
               {daysUntilRenewal} days
             </p>
           </article>
+        </div>
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-9"
+            text="The single-customer command center. Every key metric in one view: health, lifecycle phase, session progress, LoE consumption, renewal proximity, maturity state, support cases, and direct links to all external systems (SFDC, Clarizen, Drive, Gainsight, Slack, Session Planner)."
+          />
         </div>
       </section>
 
@@ -559,7 +574,7 @@ export function OverviewTab() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <h2 className="inline-flex items-center gap-2 text-lg font-semibold text-slate-900">
             <AlertCircle size={16} />
@@ -645,9 +660,15 @@ export function OverviewTab() {
             })}
           </div>
         )}
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-10"
+            text="The #1 feature requested by every CSE who tested the prototype. Shows open support cases from SFDC with severity, status, last update, and a direct link to the case. In production, this pulls live from the Salesforce Case object."
+          />
+        </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="relative rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Active Items</h2>
         <div className="mt-3 space-y-2">
           {actionItems.map((item, index) => (
@@ -666,6 +687,12 @@ export function OverviewTab() {
             <AlertTriangle size={16} className="text-amber-600" />
             <p className="text-sm text-slate-700">Active escalations: {escalationCount}</p>
           </div>
+        </div>
+        <div className="absolute bottom-4 right-4">
+          <AIIndicatorCard
+            id="ai-3"
+            text="AI-generated in production. The model would synthesize data from support cases, session history, escalations, and maturity gaps to generate a prioritized action list specific to this customer. Currently these are manually curated in mock data."
+          />
         </div>
       </section>
 

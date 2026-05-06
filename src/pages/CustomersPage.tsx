@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { FeatureDiscoveryHint } from '../components/DemoGuide/FeatureDiscoveryHint'
+import { SectionCallout } from '../components/DemoGuide/SectionCallout'
 import * as data from '../data'
 
 type SortOption = 'name' | 'health' | 'arr' | 'renewal' | 'lastSession'
@@ -135,7 +137,13 @@ export function CustomersPage() {
   }, [searchTerm, healthFilter, sortBy, lastSessionByCustomer])
 
   return (
-    <div className="space-y-4">
+    <div className="relative space-y-4">
+      <FeatureDiscoveryHint
+        id="fdh-2"
+        pageKey="customers"
+        text="Use the health filter buttons to isolate At Risk or Off Track customers. Click any customer name to enter their full workspace with 12 tabs of engagement data."
+      />
+
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -190,7 +198,7 @@ export function CustomersPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
+      <section className="relative grid gap-4 lg:grid-cols-3 md:grid-cols-2">
         {filteredCustomers.map((customer) => {
           const assessment = latestAssessmentByCustomer.get(customer.id)
           const posture =
@@ -315,6 +323,12 @@ export function CustomersPage() {
             </Link>
           )
         })}
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-4"
+            text="An alternative to the dashboard table — card view with more visual detail per customer. Sorted by health so the most critical accounts surface first. The search bar and health filters narrow the view quickly."
+          />
+        </div>
       </section>
     </div>
   )

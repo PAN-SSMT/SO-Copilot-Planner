@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { FeatureDiscoveryHint } from '../components/DemoGuide/FeatureDiscoveryHint'
+import { SectionCallout } from '../components/DemoGuide/SectionCallout'
 import { calendarEvents, customers } from '../data'
 
 type EventFilter = 'all' | 'session' | 'psr' | 'kickoff' | 'renewal' | 'internal' | 'prep'
@@ -86,7 +88,7 @@ export function CalendarPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const [currentMonth, setCurrentMonth] = useState(new Date('2026-04-01T00:00:00'))
-  const [selectedDate, setSelectedDate] = useState<string | null>(TODAY_KEY)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [activeFilter, setActiveFilter] = useState<EventFilter>('all')
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null)
   const [isCustomerMenuOpen, setIsCustomerMenuOpen] = useState(false)
@@ -244,7 +246,7 @@ export function CalendarPage() {
   ]
 
   return (
-    <div className="min-h-screen space-y-4 bg-gray-50">
+    <div className="relative min-h-screen space-y-4 bg-gray-50">
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -293,6 +295,12 @@ export function CalendarPage() {
         </div>
         <p className="mt-3 text-sm text-slate-600">{monthEventsCount} events this month</p>
       </section>
+
+      <FeatureDiscoveryHint
+        id="fdh-3"
+        pageKey="calendar"
+        text="Select a customer from the dropdown to filter the calendar to just their events. Click any day to see event details in a popup. This customer-level filtering is what differentiates this from Google Calendar."
+      />
 
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap gap-2">
@@ -388,7 +396,7 @@ export function CalendarPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-gray-200 bg-gray-200">
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
             <div
@@ -480,6 +488,12 @@ export function CalendarPage() {
               </button>
             )
           })}
+        </div>
+        <div className="absolute right-4 top-2">
+          <SectionCallout
+            id="sc-5"
+            text="Portfolio-wide session calendar. Unlike Google Calendar, this view filters by customer and color-codes by event type (sessions, PSRs, kickoffs, renewals). The customer dropdown is the key differentiator — select one customer to see only their timeline."
+          />
         </div>
       </section>
 
